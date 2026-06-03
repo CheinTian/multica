@@ -51,7 +51,7 @@ import { StatusIcon, PriorityIcon, StatusPicker, PriorityPicker, StartDatePicker
 import { IssueActionsDropdown, useIssueActions } from "../actions";
 import { ProjectPicker } from "../../projects/components/project-picker";
 import { LocalDirectoryHint } from "../../projects/components/local-directory-hint";
-import { CommentCard } from "./comment-card";
+import { CommentCard, AttachmentList } from "./comment-card";
 import { CommentInput } from "./comment-input";
 import { ResolvedThreadBar } from "./resolved-thread-bar";
 import { collectThreadReplies } from "./thread-utils";
@@ -1782,6 +1782,22 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
               currentIssueId={id}
               attachments={descEditorAttachments}
             />
+
+            {/* Issue-level attachments not inline in the description */}
+            {issueAttachments && issueAttachments.length > 0 && (
+              <AttachmentList
+                attachments={issueAttachments}
+                content={issue.description || ""}
+                className="mt-2"
+                onRemove={(attachmentId) =>
+                  handleUpdateField({
+                    attachment_ids: (issueAttachments ?? [])
+                      .filter((a) => a.id !== attachmentId)
+                      .map((a) => a.id),
+                  })
+                }
+              />
+            )}
 
             <div className="flex items-center gap-1 mt-3">
               <ReactionBar
